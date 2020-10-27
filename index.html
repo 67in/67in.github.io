@@ -330,63 +330,17 @@
 
       
         
-          
-            <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="environment"><a href="#environment" class="headerlink" title="environment"></a>environment</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">environment:</span><br><span class="line">     - IDC=dev</span><br></pre></td></tr></table></figure>
+          <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="environment"><a href="#environment" class="headerlink" title="environment"></a>environment</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">environment:</span><br><span class="line">     - IDC=dev</span><br></pre></td></tr></table></figure>
 
 <p>设置环境变量，后续可通过getenv()函数获取该变量。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$idc = getenv(<span class="string">'IDC'</span>);</span><br></pre></td></tr></table></figure>
-
-<h2 id="image"><a href="#image" class="headerlink" title="image"></a>image</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image: openresty:<span class="number">1.15</span>.<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>在此镜像的基础上</p>
-<p>指定为镜像名称或镜像 ID。如果镜像在本地不存在，<code>Compose</code> 将会尝试拉取这个镜像。</p>
-<h2 id="container-name"><a href="#container-name" class="headerlink" title="container_name"></a>container_name</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">container_name: openresty_$&#123;<span class="keyword">USER</span>&#125;-$&#123;PORT&#125;-$&#123;PORT&#125;</span><br></pre></td></tr></table></figure>
-
-<p>指定容器名称。默认将会使用 <code>项目名称_服务名称_序号</code> 这样的格式。</p>
-<p>这里${USER}-${PORT}-${PORT}是.env文件里配置的，.env文件要存放在启动docker-compose.yml文件一致的位置。</p>
-<h2 id="entrypoint"><a href="#entrypoint" class="headerlink" title="entrypoint"></a>entrypoint</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">entrypoint</span><span class="bash">:</span></span><br><span class="line">  - sh</span><br><span class="line">  - start-openresty.sh</span><br></pre></td></tr></table></figure>
-
-<p>指定服务容器启动后执行的入口文件。这里是openresty容器的启动脚本(nginx)</p>
-<p>start-openresty.sh脚本中：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">cp -r /usr/local/openresty/nginx/ /tmp/</span><br><span class="line">exec /usr/local/openresty/nginx/sbin/nginx -c /tmp/nginx/conf/nginx.conf -g 'daemon off;'</span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置后开始启动nginx，输入 “nginx路径 -c 配置文件路径”，本例中是 “/usr/<span class="built_in">local</span>/openresty/nginx/sbin/nginx -c /usr/<span class="built_in">local</span>/openresty/nginx/conf/nginx.conf”。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> docker运行nginx为什么要使用 daemon off？</span></span><br></pre></td></tr></table></figure>
-
-<p>nginx默认启动是在daemon模式下，所以在使用命令docker run -d nginx /usr/sbin/nginx时，容器启动nginx后会立刻退出，所以需要使用nginx的前台运行模式，需要在配置文件中加“daemon off”指令，或在启动时加“daemon off;”参数。注意off后面的分号不要忽略。</p>
-<p><a href="https://hub.docker.com/_/nginx/" target="_blank" rel="noopener">https://hub.docker.com/_/nginx/</a></p>
-<h2 id="tty"><a href="#tty" class="headerlink" title="tty"></a>tty</h2><p>模拟一个伪终端,用docker-compose up -d启动起来的容器不会立即停止</p>
-<p>docker-compose up -d 发现容器启动后又停止</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">restart: always</span><br><span class="line">tty: true</span><br></pre></td></tr></table></figure>
-
-<p>模拟一个伪终端，阻止容器退出</p>
-<h2 id="volumes"><a href="#volumes" class="headerlink" title="volumes"></a>volumes</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line">      - <span class="string">"./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"</span></span><br><span class="line">      - <span class="string">"../../:/var/www/html/"</span></span><br></pre></td></tr></table></figure>
-
-<p>挂载一个目录或者一个已存在的数据卷容器。</p>
-<p>数据卷的格式可以是下面多种形式：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="string">//</span> <span class="string">只是指定一个路径，Docker</span> <span class="string">会自动在创建一个数据卷（这个路径是容器内部的）。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/var/lib/mysql</span></span><br><span class="line"> </span><br><span class="line">  <span class="string">//</span> <span class="string">使用绝对路径挂载数据卷</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/opt/data:/var/lib/mysql</span></span><br><span class="line"> </span><br><span class="line">  <span class="string">//</span> <span class="string">以</span> <span class="string">Compose</span> <span class="string">配置文件为中心的相对路径作为数据卷挂载到容器。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">./cache:/tmp/cache</span></span><br><span class="line"> </span><br><span class="line">  <span class="string">//</span> <span class="string">使用用户的相对路径（~/</span> <span class="string">表示的目录是</span> <span class="string">/home/&lt;用户目录&gt;/</span> <span class="string">或者</span> <span class="string">/root/）。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">~/configs:/etc/configs/:ro</span></span><br><span class="line"> </span><br><span class="line">  <span class="string">//</span> <span class="string">已经存在的命名的数据卷。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">datavolume:/var/lib/mysql</span></span><br></pre></td></tr></table></figure>
-
-<p>链接：<a href="https://www.jianshu.com/p/4f14637f4b35" target="_blank" rel="noopener">https://www.jianshu.com/p/4f14637f4b35</a></p>
-<h2 id="links"><a href="#links" class="headerlink" title="links"></a>links</h2><p>服务之间可以使用服务名称相互访问，links 允许定义一个别名，从而使用该别名访问其它服务</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">links:</span><br><span class="line">      - fpm:fpm.localhost</span><br></pre></td></tr></table></figure>
-
-<h2 id="networks"><a href="#networks" class="headerlink" title="networks"></a>networks</h2><p>配置容器连接的网络。</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">openresty:</span><br><span class="line">	networks:</span><br><span class="line">      - default</span><br><span class="line">networks:</span><br><span class="line">  default:</span><br><span class="line">    external:</span><br><span class="line">      name: $&#123;<span class="keyword">USER</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>使用已存在的网络</strong></p>
-<p>一些场景下，我们并不需要创建新的网络，而只需加入已存在的网络，此时可使用external选项。示例：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">networks:</span><br><span class="line">  default:</span><br><span class="line">   external:</span><br><span class="line">    name: my-pre-existing-network</span><br></pre></td></tr></table></figure>
-
-<h2 id="ports"><a href="#ports" class="headerlink" title="ports"></a>ports</h2><p>暴露端口信息。</p>
-<p>使用宿主端口：容器端口 <code>(HOST:CONTAINER)</code> 格式，或者仅仅指定容器的端口（宿主将会随机选择端口）都可以。</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ports:</span><br><span class="line">      <span class="comment">#将容器端口与宿主机绑定</span></span><br><span class="line">      - <span class="string">"$&#123;HTTP_PORT&#125;:80"</span></span><br><span class="line">      - <span class="string">"$&#123;HTTPS_PORT&#125;:443"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="env文件位置"><a href="#env文件位置" class="headerlink" title=".env文件位置"></a>.env文件位置</h2><p>.env文件位置应该在docker-compose命令的执行位置</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd projectname/docker/dev &amp;&amp; docker-compose -p <span class="string">"projectname-<span class="variable">$(BRANCH)</span>-<span class="variable">$(USER)</span>"</span> up</span><br></pre></td></tr></table></figure>
-
-<p>此时打开hanyu_so_com/docker/dev目录然后执行docker-compose命令，.env文件应该在docker/dev文件夹下</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose -f docker/dev/docker-compose.yml-p<span class="string">"projectname-<span class="variable">$(BRANCH)</span>-<span class="variable">$(USER)</span>"</span>up</span><br></pre></td></tr></table></figure>
-
-<p>此时是在根目录的Makefile文件目录下执行命令的，.env文件应该在hanyu_so_com/根文件目录下</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/10/27/docker-compose-yml%E6%96%87%E4%BB%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
