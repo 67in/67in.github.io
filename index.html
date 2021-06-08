@@ -260,6 +260,712 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/06/08/%E6%AF%8F%E6%97%A5%E4%B8%80GO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/06/08/%E6%AF%8F%E6%97%A5%E4%B8%80GO/" itemprop="url">每日一GO</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-08T23:42:44+08:00">
+                2021-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>[toc]</p>
+<h2 id="6-8-两个Goroutine交替执行打印数字和字母"><a href="#6-8-两个Goroutine交替执行打印数字和字母" class="headerlink" title="6.8 两个Goroutine交替执行打印数字和字母"></a>6.8 两个Goroutine交替执行打印数字和字母</h2><p><code>12AB34CD56EF78GH910IJ1112KL1314MN1516OP1718QR1920ST2122UV2324WX2526YZ</code></p>
+<blockquote>
+<p>考验了对goroutine和channl的使用, 更验证了go语言的CSP并发模型—要通过通信来共享内存</p>
+</blockquote>
+<p><code>DO NOT COMMUNICATE BY SHARING MEMORY; INSTEAD, SHARE MEMORY BY COMMUNICATING.“不要以共享内存的方式来通信，相反，要通过通信来共享内存。”</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> chan1 = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">var</span> chan2 = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line"><span class="keyword">var</span> index = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">func1</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="number">26</span>;  i += <span class="number">2</span> &#123;</span><br><span class="line">      <span class="comment">// 2, 取走chan1里的元素,继续运行,打印两个数字</span></span><br><span class="line">      &lt;-chan1</span><br><span class="line">      fmt.Print(i)</span><br><span class="line">      fmt.Print(i + <span class="number">1</span>)</span><br><span class="line">      <span class="comment">// 3, 给chan2 放入一个元素,等待取走元素</span></span><br><span class="line">      chan2 &lt;- <span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">func2</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> i := <span class="string">'A'</span>; i &lt;= <span class="string">'Z'</span>; i += <span class="number">2</span> &#123;</span><br><span class="line">      <span class="comment">// 4, chan2 取出元素,执行打印两个字符 ,</span></span><br><span class="line">      &lt;-chan2</span><br><span class="line">      fmt.Print(<span class="keyword">string</span>(i))</span><br><span class="line">      fmt.Print(<span class="keyword">string</span>(i+<span class="number">1</span>))</span><br><span class="line">    <span class="comment">// 5, chan1 接收一个元素,进入阻塞状态,等待取走元素,进入第2步,2345步一直循环直到打印完</span></span><br><span class="line">      chan1 &lt;- <span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">// 6, 结束循环,index通道接收一个元素,进入阻塞状态,等待取走</span></span><br><span class="line">   index &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">   <span class="comment">// 1, chan1 里放一个值,进入阻塞状态,等待取走元素</span></span><br><span class="line">   chan1 &lt;- <span class="literal">true</span></span><br><span class="line">   <span class="keyword">go</span> func1()</span><br><span class="line">   <span class="keyword">go</span> func2()</span><br><span class="line">   <span class="comment">// 7, index通道取走元素,继续往下执行</span></span><br><span class="line">   &lt;-index</span><br><span class="line"><span class="comment">// 结果: 12AB34CD56EF78GH910IJ1112KL1314MN1516OP1718QR1920ST2122UV2324WX2526YZ</span></span><br><span class="line">&#125;</span><br><span class="line">原文链接：https:<span class="comment">//blog.csdn.net/swan_tang/article/details/103514633</span></span><br></pre></td></tr></table></figure>
+
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/09/%E5%89%8D%E7%BC%80%E6%A0%91%E8%B7%AF%E7%94%B1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/03/09/%E5%89%8D%E7%BC%80%E6%A0%91%E8%B7%AF%E7%94%B1/" itemprop="url">前缀树路由</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-09T09:52:32+08:00">
+                2021-03-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="前缀树路由"><a href="#前缀树路由" class="headerlink" title="前缀树路由"></a>前缀树路由</h1><p>[toc]</p>
+<h2 id="main-go文件调用-逻辑梳理"><a href="#main-go文件调用-逻辑梳理" class="headerlink" title="main.go文件调用 逻辑梳理"></a>main.go文件调用 逻辑梳理</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.go</span></span><br><span class="line">r := gee.New();</span><br></pre></td></tr></table></figure>
+
+<p>初始化gee的engine路由，<code>return &amp;Engine{router: newRouter()}</code>,调用 Engine, router, node结构，及router结构的newRouter()方法。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Engine <span class="keyword">struct</span> &#123;</span><br><span class="line">   router *router</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;</span><br><span class="line">	roots <span class="keyword">map</span>[<span class="keyword">string</span>]*node</span><br><span class="line">	handlers <span class="keyword">map</span>[<span class="keyword">string</span>]HandlerFunc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> node <span class="keyword">struct</span> &#123;</span><br><span class="line">	pattern  <span class="keyword">string</span> <span class="comment">// 待匹配路由，例如 /p/:lang</span></span><br><span class="line">	part     <span class="keyword">string</span> <span class="comment">// 路由中的一部分，例如 :lang</span></span><br><span class="line">	children []*node <span class="comment">// 子节点，例如 [doc, tutorial, intro]</span></span><br><span class="line">	isWild   <span class="keyword">bool</span> <span class="comment">//是否精确匹配，part含有：或*时 为true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newRouter</span><span class="params">()</span> *<span class="title">router</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;router&#123;</span><br><span class="line">		roots: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*node),</span><br><span class="line">		handlers: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]HandlerFunc),</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.go</span></span><br><span class="line">r.GET(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gee.Context)</span></span>&#123;</span><br><span class="line">		c.HTML(http.StatusOK, <span class="string">"&lt;h1&gt;hello gee&lt;/h1&gt;"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>gee/engine的GET方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//gee.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(engine *Engine)</span> <span class="title">GET</span><span class="params">(pattern <span class="keyword">string</span>, handler HandlerFunc)</span></span> &#123;</span><br><span class="line">   engine.addRoute(<span class="string">"GET"</span>, pattern, handler)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//第二个参数为handlerFunc</span></span><br><span class="line"><span class="comment">//gee.go</span></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(*Context)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//main.go</span></span><br><span class="line">r.GET(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gee.Context)</span></span>&#123;</span><br><span class="line">		c.HTML(http.StatusOK, <span class="string">"&lt;h1&gt;hello gee&lt;/h1&gt;"</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>addRoute()</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//gee.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(engine *Engine)</span> <span class="title">addRoute</span><span class="params">(method <span class="keyword">string</span>, pattern <span class="keyword">string</span>, handler HandlerFunc)</span></span> &#123;</span><br><span class="line">   engine.router.addRoute(method, pattern, handler)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//router.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *router)</span> <span class="title">addRoute</span><span class="params">(method <span class="keyword">string</span>, pattern <span class="keyword">string</span>, handler HandlerFunc)</span></span> &#123;</span><br><span class="line">	parts := parsePattern(pattern)</span><br><span class="line">	key := method + <span class="string">"-"</span> + pattern</span><br><span class="line">	</span><br><span class="line">	_, ok := r.roots[method]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		r.roots[method] = &amp;node&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	r.roots[method].insert(pattern, parts, <span class="number">0</span>)</span><br><span class="line">	r.handlers[key] = handler</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>context上下文</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">struct</span> &#123;</span><br><span class="line">	Writer     http.ResponseWriter</span><br><span class="line">	Req        *http.Request</span><br><span class="line">	<span class="comment">//request info</span></span><br><span class="line">	Path       <span class="keyword">string</span></span><br><span class="line">	Method     <span class="keyword">string</span></span><br><span class="line">	Params <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="comment">//解析后的参数</span></span><br><span class="line">	<span class="comment">//response info</span></span><br><span class="line">	StatusCode <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造html响应内容</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span> <span class="title">HTML</span><span class="params">(code <span class="keyword">int</span>, html <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	c.SetHeader(<span class="string">"Content-Type"</span>, <span class="string">"text/html"</span>)</span><br><span class="line">	c.Status(code)</span><br><span class="line">	c.Writer.Write([]<span class="keyword">byte</span>(html))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-27-28-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/01/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-27-28-md/" itemprop="url">设计模式-27/28.md</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-06T21:08:56+08:00">
+                2021-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第27讲-什么情况下要重构？到底重构什么？又该如何重构？"><a href="#第27讲-什么情况下要重构？到底重构什么？又该如何重构？" class="headerlink" title="第27讲 什么情况下要重构？到底重构什么？又该如何重构？"></a>第27讲 什么情况下要重构？到底重构什么？又该如何重构？</h1><p>[toc]</p>
+<blockquote>
+<p>对重构没有系统性、全局性的认识，面对一堆烂代码，没有重构技巧的指导，只能想到哪改到哪，并不能全面地改善代码质量。</p>
+</blockquote>
+<p>软件设计大师Martin Fowler 是这样定义重构的：“重构是一种对软件内部结构的改善，目的是在<strong>不改变软件的可见行为的情况下</strong>，使其更易理解，修改成本更低。”</p>
+<h2 id="why-为什么要重构"><a href="#why-为什么要重构" class="headerlink" title="why 为什么要重构"></a>why 为什么要重构</h2><blockquote>
+<p>项目在演进，代码不停地在堆砌。如果没有人为代码的质量负责任，代码总是会往越来越混乱的方向演进。当混乱到一定程度之后，量变引起质变，项目的维护成本已经高过重新开发一套新代码的成本，想要再去重构，已经没有人能做到了。</p>
+</blockquote>
+<p>重构是时刻保证代码质量的一个极其有效的手段，不至于让代码腐化到无可救药的地步。</p>
+<p>我们无法100%遇见未来的需求，随着系统的演进，重构代码也是不可避免的。</p>
+<p>能有效避免前期投入太多时间做过度的设计，做到有的放矢。</p>
+<p><strong>所谓“初级工程师在维护代码，高级工程师在设计代码，资深工程师在重构代码”</strong>，</p>
+<h2 id="what-到底重构什么"><a href="#what-到底重构什么" class="headerlink" title="what 到底重构什么"></a>what 到底重构什么</h2><ul>
+<li>大型重构：顶层代码设计的重构，系统、模块、代码结构、类与类之间的关系等。工具：设计思想、原则及模式等。</li>
+<li>小型重构：代码细节的重构，类、函数、变量等，比如规范命名、规范注释、消除超大类或函数、提取重复代码等。</li>
+</ul>
+<h2 id="when-什么时候重构"><a href="#when-什么时候重构" class="headerlink" title="when 什么时候重构"></a>when 什么时候重构</h2><p>不是说等到代码烂到一定程度才去重构，而是平时就具有重构意识，把持续重构也作为开发的一部分，成为一种开发习惯，对项目、对自己都会很有好处。</p>
+<h2 id="how-如何重构"><a href="#how-如何重构" class="headerlink" title="how 如何重构"></a>how 如何重构</h2><p>大规模高层次的重构难度比较大，需要组织、有计划地进行，分阶段地小步快跑，时刻让代码处于一个可运行的状态。而小规模低层次的重构，因为影响范围小，改动耗时短，所以，只要你愿意并且有时间，随时随地都可以去做</p>
+<h1 id="第28讲-为了保证重构不出错，有哪些非常能落地的技术手段？"><a href="#第28讲-为了保证重构不出错，有哪些非常能落地的技术手段？" class="headerlink" title="第28讲 为了保证重构不出错，有哪些非常能落地的技术手段？"></a>第28讲 为了保证重构不出错，有哪些非常能落地的技术手段？</h1><h1 id="第30讲-理论四：如何通过封装、抽象、模块化、中间层等解耦代码？"><a href="#第30讲-理论四：如何通过封装、抽象、模块化、中间层等解耦代码？" class="headerlink" title="第30讲 理论四：如何通过封装、抽象、模块化、中间层等解耦代码？"></a>第30讲 理论四：如何通过封装、抽象、模块化、中间层等解耦代码？</h1><p>大型重构的时候，会对系统、模块、代码结构、类之间关系等顶层代码进行重构，很重要的手段就是解耦，从而实现高内聚、低耦合。</p>
+<h2 id="解耦为何重要"><a href="#解耦为何重要" class="headerlink" title="解耦为何重要"></a>解耦为何重要</h2><p>“高内聚、松耦合”的特性可以让我们聚焦在某一模块或类中，不需要了解太多其他模块或类的代码，让我们的焦点不至于过于发散，降低了阅读和修改代码的难度。而且，因为依赖关系简单，耦合小，修改代码不至于牵一发而动全身，代码改动比较集中，引入bug的风险也就减少了很多。同时，“高内聚、松耦合”的代码可测试性也更加好，容易mock或者很少需要mock外部依赖的模块或者类。</p>
+<h2 id="怎样判断代码是否需要解耦"><a href="#怎样判断代码是否需要解耦" class="headerlink" title="怎样判断代码是否需要解耦"></a>怎样判断代码是否需要解耦</h2><p>看修改代码会不会牵一发而动全身。除此之外，还有一个直接的衡量标准，也是我在阅读源码的时候经常会用到的，那就是把模块与模块之间、类与类之间的依赖关系画出来，根据依赖关系图的复杂性来判断是否需要解耦重构。</p>
+<h2 id="如何给代码解耦"><a href="#如何给代码解耦" class="headerlink" title="如何给代码解耦"></a>如何给代码解耦</h2><h3 id="1-封装与抽象"><a href="#1-封装与抽象" class="headerlink" title="1.封装与抽象"></a>1.封装与抽象</h3><p>封装和抽象作为两个非常通用的设计思想，可以应用在很多设计场景中，比如系统、模块、lib、组件、接口、类等等的设计。封装和抽象可以有效地隐藏实现的复杂性，隔离实现的易变性，给依赖的模块提供稳定且易用的抽象接口。</p>
+<h3 id="2-中间层"><a href="#2-中间层" class="headerlink" title="2.中间层"></a>2.中间层</h3><h3 id="3-模块化"><a href="#3-模块化" class="headerlink" title="3.模块化"></a>3.模块化</h3><h3 id="4-其他设计思想和原则"><a href="#4-其他设计思想和原则" class="headerlink" title="4.其他设计思想和原则"></a>4.其他设计思想和原则</h3><ul>
+<li>单一职责</li>
+<li>依赖注入</li>
+<li>基于接口而非实现编程</li>
+<li>多用组合少用继承</li>
+<li>迪米特法则：不该有依赖关系的类就不要有依赖</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/12/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url">设计模式.md</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-28T20:54:11+08:00">
+                2020-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第25讲-实战二（上）：针对非业务的通用框架开发，如何做需求分析和设计？"><a href="#第25讲-实战二（上）：针对非业务的通用框架开发，如何做需求分析和设计？" class="headerlink" title="第25讲 实战二（上）：针对非业务的通用框架开发，如何做需求分析和设计？"></a>第25讲 实战二（上）：针对非业务的通用框架开发，如何做需求分析和设计？</h1><blockquote>
+<p>支持各种统计规则的性能计数器项目，能够获取接口调用的各种统计信息，比如，响应时间的最大值（max）、最小值（min）、平均值（avg）、百分位值（percentile）、接口调用次数（count）、频率（tps） 等，并且支持将统计结果以各种显示格式（比如：JSON格式、网页格式、自定义显示格式等）输出到各种终端（Console命令行、HTTP网页、Email、日志文件、自定义输出终端等），以方便查看。</p>
+</blockquote>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><h3 id="1-功能性需求分析"><a href="#1-功能性需求分析" class="headerlink" title="1. 功能性需求分析"></a>1. 功能性需求分析</h3><p>最开始引言的需求描述不符合这个规律。我们需要把它拆解成一个一个的“干条条”。</p>
+<ul>
+<li><p>接口统计信息：包括接口响应时间的统计信息，以及接口调用次数的统计信息等。</p>
+</li>
+<li><p>统计信息的类型：max、min、avg、percentile、count、tps等。</p>
+</li>
+<li><p>统计信息显示格式：Json、Html、自定义显示格式。</p>
+</li>
+<li><p>统计信息显示终端：Console、Email、HTTP网页、日志、自定义显示终端。</p>
+</li>
+</ul>
+<p>也可画如下的线框图：</p>
+<p>![image-20201228211357655](/Users/liuqin/Library/Application Support/typora-user-images/image-20201228211357655.png)</p>
+<p>![image-20201228211417175](/Users/liuqin/Library/Application Support/typora-user-images/image-20201228211417175.png)</p>
+<p>![image-20201228211436340](/Users/liuqin/Library/Application Support/typora-user-images/image-20201228211436340.png)</p>
+<p>实际上，从线框图中，我们还能挖掘出了下面几个隐藏的需求。</p>
+<ul>
+<li>统计触发方式：包括主动和被动两种。主动表示以一定的频率定时统计数据，并主动推送到显示终端，比如邮件推送。被动表示用户触发统计，比如用户在网页中选择要统计的时间区间，触发统计，并将结果显示给用户。</li>
+<li>统计时间区间：框架需要支持自定义统计时间区间，比如统计最近10分钟的某接口的tps、访问次数，或者统计12月11日00点到12月12日00点之间某接口响应时间的最大值、最小值、平均值等。</li>
+<li>统计时间间隔：对于主动触发统计，我们还要支持指定统计时间间隔，也就是多久触发一次统计显示。比如，每间隔10s统计一次接口信息并显示到命令行中，每间隔24小时发送一封统计信息邮件。</li>
+</ul>
+<h3 id="2-非功能性需求分析"><a href="#2-非功能性需求分析" class="headerlink" title="2. 非功能性需求分析"></a>2. 非功能性需求分析</h3><ul>
+<li>易用性：要有产品意识，是否易集成，易插拔，跟业务代码是否松耦合，接口是否灵活，文档质量</li>
+<li>性能：低延迟，即不影响接口本身的响应时间，对内存的消耗不能太大。</li>
+<li>扩展性：在不拿到框架源码的情况下，为框架扩展新的功能。给框架开发插件。</li>
+<li>容错性：不能能因为框架本身的异常导致接口请求出错。对可能存在的各种异常情况都考虑全面，对外暴露的接口抛出的所有运行时、非运行时异常都进行捕获处理。</li>
+<li>通用性</li>
+</ul>
+<h2 id="框架设计"><a href="#框架设计" class="headerlink" title="框架设计"></a>框架设计</h2><p>最开始：TDD(测试驱动开发)和Prototype(最小原型)，先聚焦于一个简单的应用场景。</p>
+<blockquote>
+<p>对于性能计数器这个框架的开发来说，我们可以先聚焦于一个非常具体、简单的应用场景，比如统计用户注册、登录这两个接口的响应时间的最大值和平均值、接口调用次数，并且将统计结果以JSON的格式输出到命令行中。现在这个需求简单、具体、明确，设计实现起来难度降低了很多。</p>
+</blockquote>
+<p>![image-20201228210529468](/Users/liuqin/Library/Application Support/typora-user-images/image-20201228210529468.png)</p>
+<ul>
+<li><p>数据采集：负责打点采集原始数据，包括记录每次接口请求的响应时间和请求时间。数据采集过程要高度容错，不能影响到接口本身的可用性。除此之外，因为这部分功能是暴露给框架的使用者的，所以在设计数据采集API的时候，我们也要尽量考虑其易用性。</p>
+</li>
+<li><p>存储：负责将采集的原始数据保存下来，以便后面做聚合统计。数据的存储方式有多种，比如：Redis、MySQL、HBase、日志、文件、内存等。数据存储比较耗时，为了尽量地减少对接口性能（比如响应时间）的影响，采集和存储的过程异步完成。</p>
+</li>
+<li><p>聚合统计：负责将原始数据聚合为统计数据，比如：max、min、avg、pencentile、count、tps等。为了支持更多的聚合统计规则，代码希望尽可能灵活、可扩展。</p>
+</li>
+<li><p>显示：负责将统计数据以某种格式显示到终端，比如：输出到命令行、邮件、网页、自定义显示终端等。</p>
+</li>
+</ul>
+<h2 id="重点回顾"><a href="#重点回顾" class="headerlink" title="重点回顾"></a>重点回顾</h2><ol>
+<li>对于非业务通用框架的开发，我们在做需求分析的时候，除了功能性需求分析之外，还需要考虑框架的非功能性需求。比如，框架的易用性、性能、扩展性、容错性、通用性等。</li>
+<li>画产品线框图、聚焦简单应用场景、设计实现最小原型、画系统设计图等。让问题简化、具体、明确，提供一个迭代设计开发的基础，逐步推进。</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/28/%E8%B6%A3%E8%B0%88%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/12/28/%E8%B6%A3%E8%B0%88%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE-md/" itemprop="url">趣谈网络协议.md</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-28T13:32:22+08:00">
+                2020-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第1讲-为什么要学习网络协议？"><a href="#第1讲-为什么要学习网络协议？" class="headerlink" title="第1讲 为什么要学习网络协议？"></a>第1讲 为什么要学习网络协议？</h1><blockquote>
+<p>《圣经》中有一个通天塔的故事，大致是说，上帝为了阻止人类联合起来，就让人类说不同的语言。人类没法儿沟通，达不成“协议”，通天塔的计划就失败了。</p>
+<p>但是千年以后，有一种叫“程序猿”的物种，敲着一种这个群体通用的语言，连接着全世界所有的人，打造这互联网世界的通天塔。如今的世界，正是因为互联网，才连接在一起。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> &#123;</span> </span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">String</span>[] args)</span></span>&#123;  </span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"Hello World!"</span>); </span><br><span class="line">  &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段文字也是一种协议，是人类和计算机沟通的协议，<strong>只有通过这种协议，计算机才知道我们想让它做什么。</strong></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/27/docker-compose-yml%E6%96%87%E4%BB%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -551,7 +1257,7 @@
               
                 <a href="/archives/%7C%7Carchive">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -564,7 +1270,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -601,7 +1307,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

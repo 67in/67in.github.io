@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第27讲 什么情况下要重构？到底重构什么？又该如何重构？[toc]  对重构没有系统性、全局性的认识，面对一堆烂代码，没有重构技巧的指导，只能想到哪改到哪，并不能全面地改善代码质量。  软件设计大师Martin Fowler 是这样定义重构的：“重构是一种对软件内部结构的改善，目的是在不改变软件的可见行为的情况下，使其更易理解，修改成本更低。” why 为什么要重构 项目在演进，代码不停地在堆砌。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式-27&#x2F;28.md">
+<meta property="og:url" content="http://yoursite.com/2021/01/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-27-28-md/index.html">
+<meta property="og:site_name" content="67iner">
+<meta property="og:description" content="第27讲 什么情况下要重构？到底重构什么？又该如何重构？[toc]  对重构没有系统性、全局性的认识，面对一堆烂代码，没有重构技巧的指导，只能想到哪改到哪，并不能全面地改善代码质量。  软件设计大师Martin Fowler 是这样定义重构的：“重构是一种对软件内部结构的改善，目的是在不改变软件的可见行为的情况下，使其更易理解，修改成本更低。” why 为什么要重构 项目在演进，代码不停地在堆砌。">
+<meta property="article:published_time" content="2021-01-06T13:08:56.000Z">
+<meta property="article:modified_time" content="2021-06-08T15:55:59.569Z">
+<meta property="article:author" content="67in">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/01/06/设计模式-27-28-md/"/>
+
+
+
+
+
+  <title>设计模式-27/28.md | 67iner</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">67iner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你所有的焦虑都来源于原地不动</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-27-28-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="67in">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="67iner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">设计模式-27/28.md</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-06T21:08:56+08:00">
+                2021-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第27讲-什么情况下要重构？到底重构什么？又该如何重构？"><a href="#第27讲-什么情况下要重构？到底重构什么？又该如何重构？" class="headerlink" title="第27讲 什么情况下要重构？到底重构什么？又该如何重构？"></a>第27讲 什么情况下要重构？到底重构什么？又该如何重构？</h1><p>[toc]</p>
+<blockquote>
+<p>对重构没有系统性、全局性的认识，面对一堆烂代码，没有重构技巧的指导，只能想到哪改到哪，并不能全面地改善代码质量。</p>
+</blockquote>
+<p>软件设计大师Martin Fowler 是这样定义重构的：“重构是一种对软件内部结构的改善，目的是在<strong>不改变软件的可见行为的情况下</strong>，使其更易理解，修改成本更低。”</p>
+<h2 id="why-为什么要重构"><a href="#why-为什么要重构" class="headerlink" title="why 为什么要重构"></a>why 为什么要重构</h2><blockquote>
+<p>项目在演进，代码不停地在堆砌。如果没有人为代码的质量负责任，代码总是会往越来越混乱的方向演进。当混乱到一定程度之后，量变引起质变，项目的维护成本已经高过重新开发一套新代码的成本，想要再去重构，已经没有人能做到了。</p>
+</blockquote>
+<p>重构是时刻保证代码质量的一个极其有效的手段，不至于让代码腐化到无可救药的地步。</p>
+<p>我们无法100%遇见未来的需求，随着系统的演进，重构代码也是不可避免的。</p>
+<p>能有效避免前期投入太多时间做过度的设计，做到有的放矢。</p>
+<p><strong>所谓“初级工程师在维护代码，高级工程师在设计代码，资深工程师在重构代码”</strong>，</p>
+<h2 id="what-到底重构什么"><a href="#what-到底重构什么" class="headerlink" title="what 到底重构什么"></a>what 到底重构什么</h2><ul>
+<li>大型重构：顶层代码设计的重构，系统、模块、代码结构、类与类之间的关系等。工具：设计思想、原则及模式等。</li>
+<li>小型重构：代码细节的重构，类、函数、变量等，比如规范命名、规范注释、消除超大类或函数、提取重复代码等。</li>
+</ul>
+<h2 id="when-什么时候重构"><a href="#when-什么时候重构" class="headerlink" title="when 什么时候重构"></a>when 什么时候重构</h2><p>不是说等到代码烂到一定程度才去重构，而是平时就具有重构意识，把持续重构也作为开发的一部分，成为一种开发习惯，对项目、对自己都会很有好处。</p>
+<h2 id="how-如何重构"><a href="#how-如何重构" class="headerlink" title="how 如何重构"></a>how 如何重构</h2><p>大规模高层次的重构难度比较大，需要组织、有计划地进行，分阶段地小步快跑，时刻让代码处于一个可运行的状态。而小规模低层次的重构，因为影响范围小，改动耗时短，所以，只要你愿意并且有时间，随时随地都可以去做</p>
+<h1 id="第28讲-为了保证重构不出错，有哪些非常能落地的技术手段？"><a href="#第28讲-为了保证重构不出错，有哪些非常能落地的技术手段？" class="headerlink" title="第28讲 为了保证重构不出错，有哪些非常能落地的技术手段？"></a>第28讲 为了保证重构不出错，有哪些非常能落地的技术手段？</h1><h1 id="第30讲-理论四：如何通过封装、抽象、模块化、中间层等解耦代码？"><a href="#第30讲-理论四：如何通过封装、抽象、模块化、中间层等解耦代码？" class="headerlink" title="第30讲 理论四：如何通过封装、抽象、模块化、中间层等解耦代码？"></a>第30讲 理论四：如何通过封装、抽象、模块化、中间层等解耦代码？</h1><p>大型重构的时候，会对系统、模块、代码结构、类之间关系等顶层代码进行重构，很重要的手段就是解耦，从而实现高内聚、低耦合。</p>
+<h2 id="解耦为何重要"><a href="#解耦为何重要" class="headerlink" title="解耦为何重要"></a>解耦为何重要</h2><p>“高内聚、松耦合”的特性可以让我们聚焦在某一模块或类中，不需要了解太多其他模块或类的代码，让我们的焦点不至于过于发散，降低了阅读和修改代码的难度。而且，因为依赖关系简单，耦合小，修改代码不至于牵一发而动全身，代码改动比较集中，引入bug的风险也就减少了很多。同时，“高内聚、松耦合”的代码可测试性也更加好，容易mock或者很少需要mock外部依赖的模块或者类。</p>
+<h2 id="怎样判断代码是否需要解耦"><a href="#怎样判断代码是否需要解耦" class="headerlink" title="怎样判断代码是否需要解耦"></a>怎样判断代码是否需要解耦</h2><p>看修改代码会不会牵一发而动全身。除此之外，还有一个直接的衡量标准，也是我在阅读源码的时候经常会用到的，那就是把模块与模块之间、类与类之间的依赖关系画出来，根据依赖关系图的复杂性来判断是否需要解耦重构。</p>
+<h2 id="如何给代码解耦"><a href="#如何给代码解耦" class="headerlink" title="如何给代码解耦"></a>如何给代码解耦</h2><h3 id="1-封装与抽象"><a href="#1-封装与抽象" class="headerlink" title="1.封装与抽象"></a>1.封装与抽象</h3><p>封装和抽象作为两个非常通用的设计思想，可以应用在很多设计场景中，比如系统、模块、lib、组件、接口、类等等的设计。封装和抽象可以有效地隐藏实现的复杂性，隔离实现的易变性，给依赖的模块提供稳定且易用的抽象接口。</p>
+<h3 id="2-中间层"><a href="#2-中间层" class="headerlink" title="2.中间层"></a>2.中间层</h3><h3 id="3-模块化"><a href="#3-模块化" class="headerlink" title="3.模块化"></a>3.模块化</h3><h3 id="4-其他设计思想和原则"><a href="#4-其他设计思想和原则" class="headerlink" title="4.其他设计思想和原则"></a>4.其他设计思想和原则</h3><ul>
+<li>单一职责</li>
+<li>依赖注入</li>
+<li>基于接口而非实现编程</li>
+<li>多用组合少用继承</li>
+<li>迪米特法则：不该有依赖关系的类就不要有依赖</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/28/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="设计模式.md">
+                <i class="fa fa-chevron-left"></i> 设计模式.md
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/09/%E5%89%8D%E7%BC%80%E6%A0%91%E8%B7%AF%E7%94%B1/" rel="prev" title="前缀树路由">
+                前缀树路由 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">67in</p>
+              <p class="site-description motion-element" itemprop="description">67in个人博客，主要涉及后端知识分享、书籍阅读学习等</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第27讲-什么情况下要重构？到底重构什么？又该如何重构？"><span class="nav-number">1.</span> <span class="nav-text">第27讲 什么情况下要重构？到底重构什么？又该如何重构？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#why-为什么要重构"><span class="nav-number">1.1.</span> <span class="nav-text">why 为什么要重构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#what-到底重构什么"><span class="nav-number">1.2.</span> <span class="nav-text">what 到底重构什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#when-什么时候重构"><span class="nav-number">1.3.</span> <span class="nav-text">when 什么时候重构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#how-如何重构"><span class="nav-number">1.4.</span> <span class="nav-text">how 如何重构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第28讲-为了保证重构不出错，有哪些非常能落地的技术手段？"><span class="nav-number">2.</span> <span class="nav-text">第28讲 为了保证重构不出错，有哪些非常能落地的技术手段？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第30讲-理论四：如何通过封装、抽象、模块化、中间层等解耦代码？"><span class="nav-number">3.</span> <span class="nav-text">第30讲 理论四：如何通过封装、抽象、模块化、中间层等解耦代码？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解耦为何重要"><span class="nav-number">3.1.</span> <span class="nav-text">解耦为何重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎样判断代码是否需要解耦"><span class="nav-number">3.2.</span> <span class="nav-text">怎样判断代码是否需要解耦</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何给代码解耦"><span class="nav-number">3.3.</span> <span class="nav-text">如何给代码解耦</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-封装与抽象"><span class="nav-number">3.3.1.</span> <span class="nav-text">1.封装与抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-中间层"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.中间层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-模块化"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.模块化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他设计思想和原则"><span class="nav-number">3.3.4.</span> <span class="nav-text">4.其他设计思想和原则</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">67in</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
