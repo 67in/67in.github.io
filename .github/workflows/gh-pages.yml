@@ -29,12 +29,6 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      # 创建 CNAME，这个是原始配置中没有的
-      - uses: "finnp/create-file-action@master"
-        env:
-          FILE_NAME: "./public/CNAME"
-          FILE_DATA: "h1z3y3.me"
-
       # 将站点发布到对应分支
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
