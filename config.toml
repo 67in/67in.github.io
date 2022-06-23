@@ -825,7 +825,7 @@ wordCountIcon = "pencil-alt"
 displayReadingTime = true
 readingTimeIcon = "clock"
 
-displayBusuanziPagePV = false
+displayBusuanziPagePV = true
 busuanziPagePVIcon = "eye"
 # Note: render only in production
 #       environment
@@ -1279,7 +1279,7 @@ displaySiteCopyright = true
 # Custom Footer (Markdown supported)
 customFooter = ""
 
-displayBusuanziSiteUVAndPV = false
+displayBusuanziSiteUVAndPV = true
 busuanziSiteUVText = "Site UV"
 busuanziSiteUVIcon = "user"
 busuanziSitePVText = "Site PV"
