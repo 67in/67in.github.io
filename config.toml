@@ -690,7 +690,7 @@ utterancesLabel = ""
 # Note: https://utteranc.es/
 
 ## Gitalk
-enableGitalk = false
+enableGitalk = true
 gitalkClientID = "5e62eb7072dd68183c2a"
 gitalkClientSecret = "424ae7acd998587ada9c3b13273e6c96eeeca1be"
 gitalkRepo = "67in.github.io"

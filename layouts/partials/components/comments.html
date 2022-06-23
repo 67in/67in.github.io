@@ -1,0 +1,19 @@
+{{ if (.Site.Params.gitalk) }}
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '5e62eb7072dd68183c2a',
+        clientSecret: '424ae7acd998587ada9c3b13273e6c96eeeca1be',
+        repo: '67in.github.io',
+        owner: '67in',
+        admin: ['67in'],
+        id: md5(location.pathname),
+        distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+</script>
+{{ end }}
