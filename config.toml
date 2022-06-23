@@ -98,17 +98,17 @@ keepWhitespace = false
 # Author’s information
 [author]
 # Name
-name = "reuixiy"
+name = "67in"
 # Email
-email = "reuixiy@gmail.com"
+email = "1134078052@qq.com"
 # Motto or introduction
-motto = "Viva La Vida"
+motto = "不是学会了才能做 而是做了才能学会"
 # Avatar
-avatar = "/icons/apple-touch-icon.png"
+avatar = "/icons/icon.jpeg"
 # Personal website, default: baseURL
-website = "https://io-oi.me/"
+website = "https://67in.github.io/"
 # Twitter
-twitter = "reuixiy"
+twitter = "67in"
 
 # Related content
 [related]
@@ -350,7 +350,7 @@ homeLinksDelimiter = ""
 ######################################
 # Site Info
 
-siteLogo = "/icons/apple-touch-icon.png"
+siteLogo = "/icons/icon.jpeg"
 # Note: used for JSON-LD, Open Graph
 
 siteDescription = "MemE is a powerful and highly customizable GoHugo theme for personal blogs."
@@ -361,7 +361,7 @@ siteCreatedTime = "1969-07-20T20:17:43+00:00"
 # ATTENTION: keep this format, change
 #            the number
 
-siteTwitter = "reuixiy"
+siteTwitter = "67in"
 # Note: used for Twitter Cards
 
 
