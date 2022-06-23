@@ -104,7 +104,7 @@ email = "1134078052@qq.com"
 # Motto or introduction
 motto = "不是学会了才能做 而是做了才能学会"
 # Avatar
-avatar = "https://raw.githubusercontent.com/67in/blog_images/main/img/202206231258273.jpeg"
+avatar = "/icons/apple-touch-icon.png"
 # Personal website, default: baseURL
 website = "https://67in.github.io/"
 # Twitter
@@ -350,7 +350,7 @@ homeLinksDelimiter = ""
 ######################################
 # Site Info
 
-siteLogo = "https://raw.githubusercontent.com/67in/blog_images/main/img/202206231258273.jpeg"
+siteLogo = "/icons/apple-touch-icon.png"
 # Note: used for JSON-LD, Open Graph
 
 siteDescription = "MemE is a powerful and highly customizable GoHugo theme for personal blogs."
