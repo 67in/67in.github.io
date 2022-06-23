@@ -647,13 +647,13 @@ mermaidThemeDark = 'dark'
 # Note: render only in production
 #       environment
 
-enableComments = false
+enableComments = true
 # Note: *global settings*
 #       `comments` in post’s Front Matter
 #       has a higher priority than here
 
 # directly load the comments after pages loaded
-autoLoadComments = false
+autoLoadComments = true
 
 ## Disqus
 enableDisqus = false
