@@ -104,7 +104,7 @@ email = "1134078052@qq.com"
 # Motto or introduction
 motto = "不是学会了才能做 而是做了才能学会"
 # Avatar
-avatar = "/icons/icon.jpeg"
+avatar = "/img/202206231258273.jpeg"
 # Personal website, default: baseURL
 website = "https://67in.github.io/"
 # Twitter
@@ -350,7 +350,7 @@ homeLinksDelimiter = ""
 ######################################
 # Site Info
 
-siteLogo = "/icons/icon.jpeg"
+siteLogo = "/img/202206231258273.jpeg"
 # Note: used for JSON-LD, Open Graph
 
 siteDescription = "MemE is a powerful and highly customizable GoHugo theme for personal blogs."
@@ -905,9 +905,9 @@ captionPrefix = "◎ "
 #       /images/meme.jpg
 #       (~/blog/static/images/meme.jpg)
 
-enableImageHost = false
+enableImageHost = true
 
-imageHostURL = "https://example.com/"
+imageHostURL = "https://raw.githubusercontent.com/67in/blog_images/main/"
 
 # Replace the image link in the HTML
 # head meta also?
