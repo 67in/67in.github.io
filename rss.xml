@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.101.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Sat, 25 Jun 2022 13:25:07 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>GO Escape Analysis</title><link>https://67in.github.io/posts/go-escape-analysis/</link><guid isPermaLink="true">https://67in.github.io/posts/go-escape-analysis/</guid><pubDate>Fri, 24 Jun 2022 07:09:27 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
+<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.101.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Sat, 25 Jun 2022 13:27:58 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>GO Escape Analysis</title><link>https://67in.github.io/posts/go-escape-analysis/</link><guid isPermaLink="true">https://67in.github.io/posts/go-escape-analysis/</guid><pubDate>Fri, 24 Jun 2022 07:09:27 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
 &lt;blockquote>
 &lt;p>“Quality is never an accident; it is always the result of intelligent effort.” — John Ruskin.&lt;/p>
 &lt;/blockquote>
@@ -49,7 +49,7 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;/div>&lt;p>使用&lt;code>go build -gcflags '-m -l' xx.go&lt;/code>查看go编译过程中变量是否发生逃逸。-gcflags参数用于弃用编译器支持的额外标志。如，-m用于输出编译器的优化细节(包括使用逃逸分析这种优化)，相反可以使用-N来关闭编译器优化；而-l则用于禁用foo函数的内联优化，防止逃逸被编译器通过内联彻底地抹除。&lt;/p>
+&lt;/div>&lt;p>使用&lt;code>go build -gcflags '-m -l' xx.go&lt;/code>查看Go编译过程中变量是否发生逃逸。-gcflags参数用于弃用编译器支持的额外标志。如，-m用于输出编译器的优化细节(包括使用逃逸分析这种优化)，相反可以使用-N来关闭编译器优化；而-l则用于禁用foo函数的内联优化，防止逃逸被编译器通过内联彻底地抹除。&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
@@ -129,12 +129,12 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
 &lt;/div>&lt;p>这是部分结果，其中有使用runtime.newobject()函数，它的作用是在堆上分配一块内存，从而说明变量发生了逃逸。&lt;/p>
-&lt;h2 id="go与c中的堆栈概念的区别">Go与C++中的堆栈概念的区别&lt;/h2>
+&lt;h2 id="go与cc中的堆栈概念的区别">Go与C/C++中的堆栈概念的区别&lt;/h2>
 &lt;p>C/C++中的堆栈是操作系统级别的概念，它通过编译器所在的环境来决定。&lt;/p>
 &lt;ol>
 &lt;li>栈：指的是程序运行时自动获得的一小块内存，函数调用消耗的栈的大小，会在编译期间由编译器决定。这块内存用于保存局部变量或者保存函数调用栈。（1MB）&lt;/li>
 &lt;li>堆：每当程序通过系统调用向操作系统申请内存时，会将所需的空间从维护的堆内存地址空间中分配出去，而在归还是将归还的内存合并到所维护的地址空间中。（1GB）&lt;/li>
 &lt;/ol>
-&lt;p>Go语言中的堆栈与C/C++中的有较大区别。go语言中的堆栈都指的是go运行时向操作系统申请的堆内存，被全部用于GO的运行时，维护运行时各个组件的协调。调度器、垃圾回收、系统调用等。所以从理论上来说，相较于只有1MB的C/C++中的栈而言，Go可以拥有1GB的栈内存。&lt;/p>
+&lt;p>Go语言中的堆栈与C/C++中的有较大区别。Go语言中的堆栈都指的是Go运行时向操作系统申请的堆内存，被全部用于Go的运行时，维护运行时各个组件的协调。调度器、垃圾回收、系统调用等。所以从理论上来说，相较于只有1MB的C/C++中的栈而言，Go可以拥有1GB的栈内存。&lt;/p>
 &lt;p>Go指针不能算术运算
 Go语言运行时为了防止内存碎片化，会适当对整个栈进行深拷贝，将其整个复制到另一块内存（这个过程对用户态的代码是不可见的），所以在运行过程中无法确定运算前后指针所指向的地址内容是否被运行时移动。也正是这个原因，指针的算术运算不再能生效。&lt;/p></description></item></channel></rss>
