@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.101.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Sat, 25 Jun 2022 13:21:43 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>GO Escape Analysis</title><link>https://67in.github.io/posts/go-escape-analysis/</link><guid isPermaLink="true">https://67in.github.io/posts/go-escape-analysis/</guid><pubDate>Fri, 24 Jun 2022 07:09:27 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
+<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.101.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Sat, 25 Jun 2022 13:25:07 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>GO Escape Analysis</title><link>https://67in.github.io/posts/go-escape-analysis/</link><guid isPermaLink="true">https://67in.github.io/posts/go-escape-analysis/</guid><pubDate>Fri, 24 Jun 2022 07:09:27 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
 &lt;blockquote>
 &lt;p>“Quality is never an accident; it is always the result of intelligent effort.” — John Ruskin.&lt;/p>
 &lt;/blockquote>
@@ -129,7 +129,7 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
 &lt;/div>&lt;p>这是部分结果，其中有使用runtime.newobject()函数，它的作用是在堆上分配一块内存，从而说明变量发生了逃逸。&lt;/p>
-&lt;h3 id="go与c中的堆栈概念的区别">Go与C++中的堆栈概念的区别&lt;/h3>
+&lt;h2 id="go与c中的堆栈概念的区别">Go与C++中的堆栈概念的区别&lt;/h2>
 &lt;p>C/C++中的堆栈是操作系统级别的概念，它通过编译器所在的环境来决定。&lt;/p>
 &lt;ol>
 &lt;li>栈：指的是程序运行时自动获得的一小块内存，函数调用消耗的栈的大小，会在编译期间由编译器决定。这块内存用于保存局部变量或者保存函数调用栈。（1MB）&lt;/li>
