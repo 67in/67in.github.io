@@ -1,3 +1,140 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><title type="text">67in</title><subtitle type="html">MemE is a powerful and highly customizable GoHugo theme for personal blogs.</subtitle><updated>2022-06-23T06:27:57+00:00</updated><id>https://67in.github.io/</id><link rel="alternate" type="text/html" href="https://67in.github.io/"/><link rel="self" type="application/atom+xml" href="https://67in.github.io/atom.xml"/><author><name>67in</name><uri>https://67in.github.io/</uri><email>1134078052@qq.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><generator uri="https://gohugo.io/" version="0.101.0">Hugo</generator><entry><title type="text">Test1</title><link rel="alternate" type="text/html" href="https://67in.github.io/posts/test1/"/><id>https://67in.github.io/posts/test1/</id><updated>2022-06-23T06:27:52+00:00</updated><published>2022-06-23T08:05:03+08:00</published><author><name>67in</name><uri>https://67in.github.io/</uri><email>1134078052@qq.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html">test test test</summary><content type="html">&lt;p>test
-test
-test&lt;/p></content></entry><entry><title type="text">Test</title><link rel="alternate" type="text/html" href="https://67in.github.io/posts/test/"/><id>https://67in.github.io/posts/test/</id><updated>2022-06-23T06:27:52+00:00</updated><published>2022-06-23T07:52:19+08:00</published><author><name>67in</name><uri>https://67in.github.io/</uri><email>1134078052@qq.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html">Test</summary><content type="html">&lt;h1 id="test">Test&lt;/h1></content></entry></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><title type="text">67in</title><subtitle type="html">MemE is a powerful and highly customizable GoHugo theme for personal blogs.</subtitle><updated>2022-06-25T13:21:43+00:00</updated><id>https://67in.github.io/</id><link rel="alternate" type="text/html" href="https://67in.github.io/"/><link rel="self" type="application/atom+xml" href="https://67in.github.io/atom.xml"/><author><name>67in</name><uri>https://67in.github.io/</uri><email>1134078052@qq.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><generator uri="https://gohugo.io/" version="0.101.0">Hugo</generator><entry><title type="text">GO Escape Analysis</title><link rel="alternate" type="text/html" href="https://67in.github.io/posts/go-escape-analysis/"/><id>https://67in.github.io/posts/go-escape-analysis/</id><updated>2022-06-25T13:21:41+00:00</updated><published>2022-06-24T07:09:27+08:00</published><author><name>67in</name><uri>https://67in.github.io/</uri><email>1134078052@qq.com</email></author><rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html">逃逸分析 “Quality is never an accident; it is always the result of intelligent effort.” — John Ruskin. 逃逸分析是什么 G…</summary><content type="html">&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
+&lt;blockquote>
+&lt;p>“Quality is never an accident; it is always the result of intelligent effort.” — John Ruskin.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="逃逸分析是什么">逃逸分析是什么&lt;/h3>
+&lt;p>Go编译器的一个阶段，对代码进行逃逸分析，确定其中变量的内存分配位置(栈、堆)，把变量合理地分配到它该去的地方。&lt;/p>
+&lt;p>逃逸是什么？当一个对象的指针被多个方法或线程引用时，那么这个指针就会发生逃逸。如果一个函数返回对一个变量的引用，那么这个变量就会发生逃逸。&lt;/p>
+&lt;h3 id="逃逸分析作用">逃逸分析作用&lt;/h3>
+&lt;ul>
+&lt;li>栈：分配速度快，只需通过PUSH指令，函数return后可自动释放&lt;/li>
+&lt;li>堆：需要找到合适大小的内存块，易形成内存碎片，通过垃圾回收才能释放&lt;/li>
+&lt;/ul>
+&lt;p>通过逃逸分析，可以把一些不需要分配到堆上的变量直接分配到栈上，减轻堆内存分配的开销。GC会定期停止并收集未使用的对象，这也减轻了GC的压力，提高程序的运行速度。&lt;/p>
+&lt;h2 id="如何确定是否发生逃逸">如何确定是否发生逃逸&lt;/h2>
+&lt;p>例子如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">foo&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">t&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="mi">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">t&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">x&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nf">foo&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">x&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用&lt;code>go build -gcflags '-m -l' xx.go&lt;/code>查看go编译过程中变量是否发生逃逸。-gcflags参数用于弃用编译器支持的额外标志。如，-m用于输出编译器的优化细节(包括使用逃逸分析这种优化)，相反可以使用-N来关闭编译器优化；而-l则用于禁用foo函数的内联优化，防止逃逸被编译器通过内联彻底地抹除。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">$ go build -gcflags &lt;span class="s1">&amp;#39;-m -l&amp;#39;&lt;/span> main.go
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">./escapeAnalysis.go:8:2: moved to heap: t
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">./escapeAnalysis.go:14:13: ... argument does not escape
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">./escapeAnalysis.go:14:14: *x escapes to heap
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>可以看到t被移动到堆上，发生了逃逸，*x也发生了逃逸，因为Println()函数的参数类型为interface{}，编译期间很难确定其参数的具体类型，也会发生逃逸。&lt;/p>
+&lt;p>使用反汇编命令也可以看出变量是否发生逃逸。执行命令：&lt;code>go tool compile -S main.go&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>.foo STEXT &lt;span class="nv">size&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">79&lt;/span> &lt;span class="nv">args&lt;/span>&lt;span class="o">=&lt;/span>0x8 &lt;span class="nv">locals&lt;/span>&lt;span class="o">=&lt;/span>0x18 &lt;span class="nv">funcid&lt;/span>&lt;span class="o">=&lt;/span>0x0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0000 &lt;span class="m">00000&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> TEXT &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>.foo&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>, ABIInternal, &lt;span class="nv">$24&lt;/span>-8
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0000 &lt;span class="m">00000&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> MOVQ &lt;span class="o">(&lt;/span>TLS&lt;span class="o">)&lt;/span>, CX
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0009 &lt;span class="m">00009&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> CMPQ SP, 16&lt;span class="o">(&lt;/span>CX&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x000d &lt;span class="m">00013&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$0&lt;/span>, &lt;span class="nv">$-&lt;/span>&lt;span class="m">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x000d &lt;span class="m">00013&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> JLS &lt;span class="m">72&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x000f &lt;span class="m">00015&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$0&lt;/span>, &lt;span class="nv">$-&lt;/span>&lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x000f &lt;span class="m">00015&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> SUBQ &lt;span class="nv">$24&lt;/span>, SP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0013 &lt;span class="m">00019&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> MOVQ BP, 16&lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0018 &lt;span class="m">00024&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> LEAQ 16&lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>, BP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x001d &lt;span class="m">00029&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> FUNCDATA &lt;span class="nv">$0&lt;/span>, gclocals·2a5305abe05176240e61b8620e19a815&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x001d &lt;span class="m">00029&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> FUNCDATA &lt;span class="nv">$1&lt;/span>, gclocals·33cdeccccebe80329f1fdbee7f5874cb&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x001d &lt;span class="m">00029&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> LEAQ type.int&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>, AX
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0024 &lt;span class="m">00036&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> MOVQ AX, &lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0028 &lt;span class="m">00040&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$1&lt;/span>, &lt;span class="nv">$0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0028 &lt;span class="m">00040&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> CALL runtime.newobject&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x002d &lt;span class="m">00045&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> MOVQ 8&lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>, AX
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0032 &lt;span class="m">00050&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:8&lt;span class="o">)&lt;/span> MOVQ &lt;span class="nv">$3&lt;/span>, &lt;span class="o">(&lt;/span>AX&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0039 &lt;span class="m">00057&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:9&lt;span class="o">)&lt;/span> MOVQ AX, &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>.~r0+32&lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x003e &lt;span class="m">00062&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:9&lt;span class="o">)&lt;/span> MOVQ 16&lt;span class="o">(&lt;/span>SP&lt;span class="o">)&lt;/span>, BP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0043 &lt;span class="m">00067&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:9&lt;span class="o">)&lt;/span> ADDQ &lt;span class="nv">$24&lt;/span>, SP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0047 &lt;span class="m">00071&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:9&lt;span class="o">)&lt;/span> RET
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0048 &lt;span class="m">00072&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:9&lt;span class="o">)&lt;/span> NOP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0048 &lt;span class="m">00072&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$1&lt;/span>, &lt;span class="nv">$-&lt;/span>&lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0048 &lt;span class="m">00072&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$0&lt;/span>, &lt;span class="nv">$-&lt;/span>&lt;span class="m">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x0048 &lt;span class="m">00072&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> CALL runtime.morestack_noctxt&lt;span class="o">(&lt;/span>SB&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x004d &lt;span class="m">00077&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> PCDATA &lt;span class="nv">$0&lt;/span>, &lt;span class="nv">$-&lt;/span>&lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 0x004d &lt;span class="m">00077&lt;/span> &lt;span class="o">(&lt;/span>escapeAnalysis.go:7&lt;span class="o">)&lt;/span> JMP &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这是部分结果，其中有使用runtime.newobject()函数，它的作用是在堆上分配一块内存，从而说明变量发生了逃逸。&lt;/p>
+&lt;h3 id="go与c中的堆栈概念的区别">Go与C++中的堆栈概念的区别&lt;/h3>
+&lt;p>C/C++中的堆栈是操作系统级别的概念，它通过编译器所在的环境来决定。&lt;/p>
+&lt;ol>
+&lt;li>栈：指的是程序运行时自动获得的一小块内存，函数调用消耗的栈的大小，会在编译期间由编译器决定。这块内存用于保存局部变量或者保存函数调用栈。（1MB）&lt;/li>
+&lt;li>堆：每当程序通过系统调用向操作系统申请内存时，会将所需的空间从维护的堆内存地址空间中分配出去，而在归还是将归还的内存合并到所维护的地址空间中。（1GB）&lt;/li>
+&lt;/ol>
+&lt;p>Go语言中的堆栈与C/C++中的有较大区别。go语言中的堆栈都指的是go运行时向操作系统申请的堆内存，被全部用于GO的运行时，维护运行时各个组件的协调。调度器、垃圾回收、系统调用等。所以从理论上来说，相较于只有1MB的C/C++中的栈而言，Go可以拥有1GB的栈内存。&lt;/p>
+&lt;p>Go指针不能算术运算
+Go语言运行时为了防止内存碎片化，会适当对整个栈进行深拷贝，将其整个复制到另一块内存（这个过程对用户态的代码是不可见的），所以在运行过程中无法确定运算前后指针所指向的地址内容是否被运行时移动。也正是这个原因，指针的算术运算不再能生效。&lt;/p></content></entry></feed>
