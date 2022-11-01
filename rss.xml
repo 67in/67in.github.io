@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.105.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Tue, 01 Nov 2022 12:01:31 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>Kafka</title><link>https://67in.github.io/posts/kafka/</link><guid isPermaLink="true">https://67in.github.io/posts/kafka/</guid><pubDate>Tue, 05 Jul 2022 23:15:06 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="kafka-consumer-api">Kafka Consumer API&lt;/h2>
-&lt;blockquote>
-&lt;p>独立消费者 Standalone Consumer 每次都会从第1条消息开始消费，一直到消费完全部小新，不会记录offset，妥妥的重复消费，需要借助 OffsetManager 来完成。&lt;/p>
-&lt;/blockquote>
+<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.105.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Tue, 01 Nov 2022 12:06:11 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>Kafka 不重复消费</title><link>https://67in.github.io/posts/kafka/</link><guid isPermaLink="true">https://67in.github.io/posts/kafka/</guid><pubDate>Tue, 05 Jul 2022 23:15:06 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h2 id="kafka-standaloneconsumer">Kafka StandaloneConsumer&lt;/h2>
+&lt;p>独立消费者 Standalone Consumer 每次都会从第1条消息开始消费，一直到消费完 全部消息，不会记录offset，妥妥的重复消费，需要借助 OffsetManager 来完成。&lt;/p>
 &lt;h2 id="未使用offsetmanager的standaloneconsumer">未使用OffsetManager的StandaloneConsumer&lt;/h2>
 &lt;h3 id="单分区消费">单分区消费&lt;/h3>
 &lt;div class="highlight">&lt;div class="chroma">
@@ -126,7 +124,7 @@
 Kafka和其他MQ最大的区别在于Kafka中的消息再消费后不会被删除，而是会一直保留，直到过期。
 为了防止每次重启消费者都从第1条消息开始消费，我们需要再消费消息后将offset提交给Kafka。这样重启后就可以接着上次的Offset继续消费了&lt;/p>
 &lt;p>在独立消费者中没有实现提交Offset的功能，所以需要借助OffsetManager来完成&lt;/p>
-&lt;h3 id="使用offsetmanager的standaloneconsumer">使用OffsetManager的StandaloneConsumer&lt;/h3>
+&lt;h2 id="使用offsetmanager的standaloneconsumer">使用OffsetManager的StandaloneConsumer&lt;/h2>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
