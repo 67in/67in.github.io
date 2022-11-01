@@ -8,9 +8,9 @@ draft: false
 
 独立消费者 Standalone Consumer 每次都会从第1条消息开始消费，一直到消费完 全部消息，不会记录offset，妥妥的重复消费，需要借助 OffsetManager 来完成。
 
-## 未使用OffsetManager的StandaloneConsumer
+### 未使用OffsetManager的StandaloneConsumer
 
-### 单分区消费
+- 单分区消费
 
 ```go
 func SinglePartition(topic string) {
@@ -36,7 +36,7 @@ func SinglePartition(topic string) {
 
 ```
 
-### 多分区消费
+- 多分区消费
 
 ```go
 func Partitions(topic string) {
@@ -82,7 +82,7 @@ Kafka和其他MQ最大的区别在于Kafka中的消息再消费后不会被删�
 
 在独立消费者中没有实现提交Offset的功能，所以需要借助OffsetManager来完成
 
-## 使用OffsetManager的StandaloneConsumer
+### 使用OffsetManager的StandaloneConsumer
 
 ```go
 func OffsetManager(topic string) {
