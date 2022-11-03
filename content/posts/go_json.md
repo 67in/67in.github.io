@@ -4,8 +4,6 @@ date: 2022-10-31T18:09:06+08:00
 draft: false
 ---
 
-[toc]
-
 ## 基本的序列化
 
 首先我们来看一下Go语言中`json.Marshal`（序列化）与`json.Unmarshal`（反序列化）的基本用法。
