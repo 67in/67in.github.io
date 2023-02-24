@@ -2,6 +2,8 @@
 title: "GO Defer"
 date: 2022-07-04T22:18:21+08:00
 draft: false
+tags:
+  - Golang
 ---
 
 ## 什么是defer

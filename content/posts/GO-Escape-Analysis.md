@@ -2,6 +2,8 @@
 title: "GO Escape Analysis"
 date: 2022-06-24T07:09:27+08:00
 draft: false
+tags:
+  - Golang
 ---
 
 ## 逃逸分析

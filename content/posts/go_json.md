@@ -2,6 +2,8 @@
 title: "Go语言json技巧"
 date: 2022-10-31T18:09:06+08:00
 draft: false
+tags:
+  - GOLANG 
 ---
 
 ## 基本的序列化

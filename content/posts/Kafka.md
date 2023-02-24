@@ -2,6 +2,8 @@
 title: "Kafka 不重复消费"
 date: 2022-07-05T23:15:06+08:00
 draft: false
+tags:
+  - Kafka
 ---
 
 ## Kafka StandaloneConsumer
