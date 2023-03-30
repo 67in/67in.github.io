@@ -1,4 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.108.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Fri, 24 Feb 2023 12:41:39 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>高并发系统-笔记</title><link>https://67in.github.io/posts/highconcurrentsystem/</link><guid isPermaLink="true">https://67in.github.io/posts/highconcurrentsystem/</guid><pubDate>Fri, 24 Feb 2023 19:47:37 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;blockquote>
+<?xml version="1.0" encoding="utf-8"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>67in</title><link>https://67in.github.io/</link><description>MemE is a powerful and highly customizable GoHugo theme for personal blogs.</description><generator>Hugo 0.108.0 https://gohugo.io/</generator><language>en</language><managingEditor>1134078052@qq.com (67in)</managingEditor><webMaster>1134078052@qq.com (67in)</webMaster><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><lastBuildDate>Thu, 30 Mar 2023 03:16:01 +0000</lastBuildDate><atom:link rel="self" type="application/rss+xml" href="https://67in.github.io/rss.xml"/><item><title>HighConcurrentSystem_ch02</title><link>https://67in.github.io/posts/highconcurrentsystem_ch02/</link><guid isPermaLink="true">https://67in.github.io/posts/highconcurrentsystem_ch02/</guid><pubDate>Wed, 29 Mar 2023 23:01:47 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h1 id="用户中心-缓存一致读多写少时如何解决数据更新缓存不同步">用户中心-缓存一致：读多写少时，如何解决数据更新缓存不同步？&lt;/h1>
+&lt;blockquote>
+&lt;p>用户中心这种读多写少的场景特别适合做读取缓存，通过缓存大大降低系统数据层的查询压力，但使用缓存后往往会碰到更新不同步的问题。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="缓存性价比">缓存性价比&lt;/h2>
+&lt;p>将 2000 万的账号信息放到缓存，肯定能提供性能很好的服务。它的性价比并不高：这个表查询的场景主要用于账号登录，用户即使频繁登录，也不会造成太大的流量冲击。因此，缓存在大部分时间是闲置状态，我们没必要将并发不高的数据放到缓存当中，浪费我们的预算。&lt;/p>
+&lt;p>我们需要评估缓存是否有效，一般来说，只有热点数据放到缓存才更有价值。&lt;/p>
+&lt;h2 id="临时热缓存">临时热缓存&lt;/h2>
+&lt;p>我们把目标放到会被高频查询的信息上，也就是用户信息。在很多场景下会被频繁查询展示，比如我们在论坛上看到的发帖人头像、昵称、性别等，这些都是需要频繁展示的数据，不过这些数据的总量很大，全部放入缓存很浪费空间。&lt;/p>
+&lt;p>对于这种数据，建议使用临时缓存方式，就是在用户信息第一次被使用的时候，同时将数据放到缓存当中，短期内如果再次有类似的查询就可以快速从缓存中获取。这个方式能有效降低数据库的查询压力。&lt;/p>
+&lt;p>这种临时缓存适合表中数据量大，但热数据少的情况，可以降低热点数据的压力。而之所以给缓存设置数据 TTL，是为了节省我们的内存空间。当数据在一段时间内不被使用后就会被淘汰，这样我们就不用购买太大的内存了。这种方式相对来说有极高的性价比，并且维护简单，很常用。&lt;/p>
+&lt;h2 id="缓存更新不及时问题">缓存更新不及时问题&lt;/h2>
+&lt;p>临时缓存是有 TTL 的，如果 60 秒内修改了用户的昵称，缓存是不会马上更新的。最糟糕的情况是在 60 秒后才会刷新这个用户的昵称缓存，显然这会给系统带来一些不必要的麻烦。&lt;/p>
+&lt;ol>
+&lt;li>单条实体数据缓存刷新。 在更新某条mysql数据是删除这条对应的缓存数据&lt;/li>
+&lt;li>关系型和统计型数据缓存刷新。 人工维护缓存方式；订阅数据库找到ID数据变化（使用Maxwell或Canal对Mysql的更新实时监控）；版本号缓存设计，一旦有任何更新，整个表内所有数据缓存一起过期；异步脚本遍历数据库库刷新所有相关缓存。&lt;/li>
+&lt;/ol>
+&lt;h2 id="长期热数据缓存">长期热数据缓存&lt;/h2>
+&lt;p>临时缓存虽能解决大部分问题，但当TTL到期时，若大量缓存请求没有命中，透传的流量可能会打穿我们的数据库，即缓存穿透问题，服务可能宕机。&lt;/p>
+&lt;p>长期缓存和临时缓存的混用。当我们要查询某个用户信息时，如果缓存中没有数据，长期缓存会直接返回没有找到，临时缓存则直接走更新流程。此外，我们的用户信息如果属于热点 key，并且在缓存中找不到的话，就直接返回数据不存在。&lt;/p>
+&lt;p>singleflight&lt;/p>
+&lt;h2 id="总结">总结&lt;/h2>
+&lt;p>不是所有的数据放在缓存就能有很好的收益，我们要从数据量、使用频率、缓存命中率三个角度去分析。读多写少的数据做缓存虽然能降低数据层的压力，但要根据一致性需求对其缓存的数据做更新。其中，单条实体数据最容易实现缓存更新，但是有条件查询的统计结果并不容易做到实时更新&lt;/p></description><category domain="https://67in.github.io/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F/">高并发系统</category></item><item><title>HighConcurrentSystem_ch01</title><link>https://67in.github.io/posts/highconcurrentsystem_ch01/</link><guid isPermaLink="true">https://67in.github.io/posts/highconcurrentsystem_ch01/</guid><pubDate>Wed, 08 Mar 2023 18:28:56 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;h1 id="用户中心-结构梳理大并发下你的数据库表可能成为性能隐患">用户中心-结构梳理：大并发下，你的数据库表可能成为性能隐患&lt;/h1>
+&lt;h2 id="结构梳理">结构梳理&lt;/h2>
+&lt;blockquote>
+&lt;p>从数据结构出发，对场景进行改造。先梳理数据库结构，再对系统进行高并发改造&lt;/p>
+&lt;/blockquote>
+&lt;p>用户中心的主要功能是维护用户信息、用户权限和登录状态，它保存的数据大部分都属于读多写少的数据。用户中心常见的优化方式主要是将用户中心和业务彻底拆开，不再与业务耦合，并适当增加缓存来提高系统性能。&lt;/p>
+&lt;p>精简数据量虽然能换来更好的响应速度，但不提倡过度设计。因为表字段如果缺少冗余会导致业务实现更为繁琐，比如账户表如果把昵称和头像删减掉，我们每次登录就需要多读取一次数据库，并且需要一直关注账户表的缓存同步更新；但如果我们在账户表中保留用户昵称和头像，在登陆验证后直接就可以继续其他业务逻辑了，无需再查询一次数据库。&lt;/p>
+&lt;p>有些查询往往会因为精简一两个字段就多查一次数据库，并且还要考虑缓存同步问题，实在是得不偿失，因此我们要在“更多的字段”和“更少的职能”之间找到平衡。&lt;/p>
+&lt;p>数据主要有四种：&lt;strong>实体对象主体、辅助查询表、实体关系、历史数据&lt;/strong>&lt;/p>
+&lt;p>要讲职能拆分清楚，错误做法：将用户来访记录放到缓存，用户来访记录是持续增长的，统计有多少好友、陌生人来访，但它同时保存着和用户是否是好友的标志，一旦用户好友关系变化，这些数据就需要更新，否则里面的好友关系就过时了。&lt;/p>
+&lt;ul>
+&lt;li>历史记录表，不做缓存&lt;/li>
+&lt;li>好友关系，缓存关系？用于统计有几个好友&lt;/li>
+&lt;li>来访统计数字，临时缓存&lt;/li>
+&lt;/ul>
+&lt;h3 id="数据实体表">数据实体表&lt;/h3>
+&lt;p>一般会作为主表，一行数据代表一个实体，每个实体都拥有一个独立且唯一的ID作为标识。&lt;/p>
+&lt;p>此ID对于高并发下的缓存很重要，用户登录后就需要用自己账户的ID直接查找对应的订单、昵称头像和好友列表信息。这种是按照ID直接查找的性能好，适合做长期缓存。&lt;/p>
+&lt;p>但业务除了这种，还有一些需要通过组合条件查询的，这种不太容易做缓存，很容易出现不一致、数据量不确定导致的性能不稳定等问题，并且如果涉及的数据出现变化，很难通过数据确定同步更新哪些缓存。&lt;/p>
+&lt;p>这类数据只适合存在关系数据库或提前预置计算好结果放在缓存中直接使用，做定期更新。&lt;/p>
+&lt;p>除了组合条件查询不好缓存外，像 count() 、sum() 等对数据进行实时计算也有更新不及时的问题，同样只能定期缓存汇总结果，不能频繁查询。所以，我们应该在后续的开发过程中尽量避免使用数据库做计算。&lt;/p>
+&lt;p>实体数据是我们业务的主要承载体，当我们找到实体主体的时候，就可以根据这个主体在缓存中查到所有和它有关联的数据，来服务用户。现在我们来稍微总结一下，我们整理实体表的核心思路主要有以下几点：精简数据总长度；减少表承担的业务职能；减少统计计算查询；实体数据更适合放在缓存当中；尽量让实体能够通过 ID 或关系方式查找；减少实时条件筛选方式的对外服务。&lt;/p>
+&lt;h3 id="实体辅助表">实体辅助表&lt;/h3>
+&lt;p>为了精简数据且方便管理，我们经常会根据不同用途对主表拆分，常见的方式是做纵向表拆分。&lt;/p>
+&lt;p>行业里也会用一些开源搜索引擎，辅助我们做类似的关系业务查询，比如用 ElasticSearch 做商品检索、用 OpenSearch 做文章检索等。这种可横向扩容的服务能大大降低数据库查询压力，但唯一缺点就是很难实现数据的强一致性，需要人工检测、核对两个系统的数据。实体关系表。ES做数据的复杂查询真的比mysql和oracle快很多，但是如果要更新历史数据，维护数据的一致性，会比较麻烦。&lt;/p>
+&lt;h3 id="实体关系表">实体关系表&lt;/h3>
+&lt;p>在对 1:n 或 m:n 关系的数据做缓存时，我们建议提前预估好可能参与的数据量，防止过大导致缓存缓慢。同时，通常保存这个关系在缓存中会把主体的 ID 作为 key，在 value 内保存多个关联的 ID 来记录这两个数据的关联关系。而对于读取特别频繁的的业务缓存，才会考虑把数据先按关系组织好，然后整体缓存起来，来方便查询和使用。&lt;/p>
+&lt;h4 id="到底什么样的数据适合做缓存">到底什么样的数据适合做缓存？&lt;/h4>
+&lt;p>一般来说，根据 ID 能够精准匹配的数据实体很适合做缓存；而通过 String、List 或 Set 指令形成的有多条 value 的结构适合做（1:1、1:n、m:n）辅助或关系查询；最后还有一点要注意，虽然 Hash 结构很适合做实体表的属性和状态，但是 Hgetall 指令性能并不好，很容易让缓存卡顿，建议不要这样做。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/67in/blog_images/main/img/202303292230168.png" alt="">&lt;/p>
+&lt;h3 id="动作历史表">动作历史表&lt;/h3>
+&lt;p>动作历史数据表记录的是数据实体的动作或状态变化过程，比如用户登陆日志、用户积分消费获取记录等。这类数据会随着时间不断增长，它们一般用于记录、展示最近信息，不建议用在业务的实时统计计算上。&lt;/p>
+&lt;h3 id="总结">总结：&lt;/h3>
+&lt;p>一般来说，数据可分为四类：实体表、实体辅助表、关系表和历史表，而判断是否适合缓存的核心思路主要是以下几点：能够通过 ID 快速匹配的实体，以及通过关系快速查询的数据，适合放在长期缓存当中；通过组合条件筛选统计的数据，也可以放到临时缓存，但是更新有延迟；数据增长量大或者跟设计初衷不一样的表数据，这种不适合、也不建议去做做缓存。&lt;/p></description><category domain="https://67in.github.io/tags/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F/">高并发系统</category></item><item><title>高并发系统-笔记</title><link>https://67in.github.io/posts/highconcurrentsystem/</link><guid isPermaLink="true">https://67in.github.io/posts/highconcurrentsystem/</guid><pubDate>Fri, 24 Feb 2023 19:47:37 +0800</pubDate><author>1134078052@qq.com (67in)</author><copyright>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</copyright><description>&lt;blockquote>
 &lt;p>极客时间-https://time.geekbang.org/column/article/595683&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="开篇">开篇&lt;/h2>
